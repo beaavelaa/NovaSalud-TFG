@@ -1,0 +1,134 @@
+<style>
+  .ficha-card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+  }
+  .avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; flex-shrink: 0;
+  }
+  .badge-activo   { background: #dcfce7; color: #15803d; padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+  .badge-inactivo { background: #fee2e2; color: #b91c1c; padding: 4px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+
+  .badge-estado { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  .badge-confirmada   { background: #dcfce7; color: #15803d; }
+  .badge-pendiente    { background: #fef9c3; color: #a16207; }
+  .badge-cancelada    { background: #fee2e2; color: #b91c1c; }
+  .badge-reprogramada { background: #ede9fe; color: #6d28d9; }
+
+  .info-row { display: flex; flex-direction: column; gap: 8px; }
+  .info-item { font-size: 0.9rem; color: #475569; }
+  .info-item strong { color: #0f172a; }
+
+  .table-historial th {
+    font-size: 0.78rem; text-transform: uppercase;
+    color: #94a3b8; font-weight: 600;
+    border-bottom: 2px solid #f1f5f9;
+  }
+  .table-historial td {
+    padding: 12px 8px; font-size: 0.9rem;
+    border-bottom: 1px solid #f8fafc;
+    vertical-align: middle;
+  }
+  .table-historial tr:last-child td { border-bottom: none; }
+</style>
+
+<div class="d-flex align-items-center gap-2 mb-4">
+  <a href="/pacientes" class="btn btn-outline-secondary btn-sm">← Volver</a>
+  <h2 class="fw-bold mb-0">Ficha del Paciente</h2>
+</div>
+
+
+<div class="ficha-card">
+  <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div class="d-flex align-items-center gap-4">
+      <div class="avatar">👤</div>
+      <div class="info-row">
+        <h4 class="fw-bold mb-1"><%= paciente.Nombre %></h4>
+        <div class="info-item">📋 DNI: <strong><%= paciente.DNI || "—" %></strong></div>
+        <div class="info-item">📞 Teléfono: <strong><%= paciente.Teléfono %></strong></div>
+        <div class="info-item">✉️ Email: <strong><%= paciente.Email %></strong></div>
+        <div class="info-item">
+          Estado:
+          <% if (paciente.activo !== false) { %>
+            <span class="badge-activo">Activo</span>
+          <% } else { %>
+            <span class="badge-inactivo">Inactivo</span>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <% if (session.usuario.rol === "medico") { %>
+
+      <a 
+        href="/citas/nueva?pacienteId=<%= paciente.id %>" 
+        class="btn btn-primary"
+      >
+        + Nueva Cita
+      </a>
+
+    <% } %>
+  </div>
+</div>
+
+
+<div class="ficha-card">
+  <h5 class="fw-bold mb-3">📋 Historial de Citas</h5>
+
+  <% if (citas.length === 0) { %>
+    <p class="text-muted small">Este paciente no tiene citas registradas.</p>
+  <% } else { %>
+    <table class="table table-historial w-100">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% citas.forEach(c => { %>
+          <tr>
+            <td><%= c.fecha %></td>
+            <td><%= c.hora || "—" %></td>
+            <td><%= c.motivo || "—" %></td>
+            <td>
+              <span class="badge-estado badge-<%= c.estado %>">
+                <%= c.estado.charAt(0).toUpperCase() + c.estado.slice(1) %>
+              </span>
+            </td>
+            <td>
+
+              <% if (session.usuario.rol === "medico") { %>
+
+                <a 
+                  href="/citas/<%= c.id %>/editar" 
+                  class="btn btn-sm btn-primary"
+                  style="font-size:0.78rem; padding:4px 12px; border-radius:8px;"
+                >
+                  Editar
+                </a>
+
+              <% } else { %>
+
+                <span class="text-muted small">
+                  Solo lectura
+                </span>
+
+              <% } %>
+
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>

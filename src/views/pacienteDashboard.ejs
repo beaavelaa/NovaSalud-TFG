@@ -1,0 +1,38 @@
+<h2 class="mb-4 fw-bold">Mis Citas</h2>
+
+<div class="card shadow-sm p-4">
+
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Fecha</th>
+      <th>Hora</th>
+      <th>Estado</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% citas.forEach(c => { %>
+      <tr>
+
+        <td><%= c.fecha %></td>
+        <td><%= c.hora %></td>
+
+        <td>
+          <% if (c.estado === "pendiente") { %>
+            <span class="badge bg-warning">Pendiente</span>
+          <% } else if (c.estado === "confirmada") { %>
+            <span class="badge bg-success">Confirmada</span>
+          <% } else if (c.estado === "cancelada") { %>
+            <span class="badge bg-danger">Cancelada</span>
+          <% } %>
+        </td>
+
+
+      </tr>
+    <% }) %>
+  </tbody>
+
+</table>
+
+</div>

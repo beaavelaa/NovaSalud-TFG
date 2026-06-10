@@ -1,0 +1,78 @@
+<h2 class="mb-4 fw-bold">
+  Historial de Citas
+</h2>
+
+<div class="card shadow-sm p-4">
+
+  <% if (citas.length === 0) { %>
+
+    <div class="text-center text-muted py-4">
+      No tienes citas registradas.
+    </div>
+
+  <% } else { %>
+
+    <table class="table table-hover align-middle">
+
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Estado</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <% citas.forEach(c => { %>
+
+          <tr>
+
+            <td><%= c.fecha %></td>
+
+            <td><%= c.hora %></td>
+
+            <td>
+
+              <% if (c.estado === "pendiente") { %>
+                <span class="badge bg-warning">
+                  Pendiente
+                </span>
+              <% } %>
+
+              <% if (c.estado === "confirmada") { %>
+                <span class="badge bg-success">
+                  Confirmada
+                </span>
+              <% } %>
+
+              <% if (c.estado === "cancelada") { %>
+                <span class="badge bg-danger">
+                  Cancelada
+                </span>
+              <% } %>
+
+              <% if (c.estado === "reprogramada") { %>
+                <span class="badge bg-primary">
+                  Reprogramada
+                </span>
+              <% } %>
+
+            </td>
+
+            <td>
+              <%= c.motivo || "—" %>
+            </td>
+
+          </tr>
+
+        <% }) %>
+
+      </tbody>
+
+    </table>
+
+  <% } %>
+
+</div>

@@ -1,0 +1,248 @@
+<style>
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: white;
+    border-radius: 14px;
+    padding: 20px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    border-left: 4px solid transparent;
+    transition: transform .15s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); }
+  .kpi-card.azul    { border-color: #3b82f6; }
+  .kpi-card.naranja { border-color: #f59e0b; }
+  .kpi-card.rojo    { border-color: #ef4444; }
+  .kpi-card.verde   { border-color: #22c55e; }
+  .kpi-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .kpi-card.azul    .kpi-icon { background: #eff6ff; }
+  .kpi-card.naranja .kpi-icon { background: #fffbeb; }
+  .kpi-card.rojo    .kpi-icon { background: #fef2f2; }
+  .kpi-card.verde   .kpi-icon { background: #f0fdf4; }
+  .kpi-num   { font-size: 2rem; font-weight: 700; line-height: 1; color: #0f172a; }
+  .kpi-label { font-size: 0.78rem; color: #64748b; margin-top: 4px; }
+
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 260px;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .panel {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .panel-title { font-weight: 700; font-size: 1rem; margin-bottom: 16px; color: #0f172a; }
+
+  .table-citas th {
+    font-size: 0.78rem; text-transform: uppercase;
+    color: #94a3b8; font-weight: 600;
+    border-bottom: 2px solid #f1f5f9; padding-bottom: 10px;
+  }
+  .table-citas td {
+    padding: 12px 8px; vertical-align: middle;
+    border-bottom: 1px solid #f8fafc; font-size: 0.9rem;
+  }
+  .table-citas tr:last-child td { border-bottom: none; }
+
+  .badge-estado {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .badge-confirmada   { background: #dcfce7; color: #15803d; }
+  .badge-pendiente    { background: #fef9c3; color: #a16207; }
+  .badge-cancelada    { background: #fee2e2; color: #b91c1c; }
+  .badge-reprogramada { background: #ede9fe; color: #6d28d9; }
+
+  .alertas-panel { display: flex; flex-direction: column; gap: 10px; }
+  .alerta-item {
+    background: #f8fafc; border-radius: 10px;
+    padding: 12px 14px; font-size: 0.82rem; color: #334155;
+    display: flex; align-items: flex-start; gap: 10px;
+    border-left: 3px solid #cbd5e1;
+  }
+  .alerta-item.warn   { border-color: #f59e0b; background: #fffbeb; }
+  .alerta-item.danger { border-color: #ef4444; background: #fef2f2; }
+  .alerta-item.info   { border-color: #3b82f6; background: #eff6ff; }
+  .alerta-icon { font-size: 1rem; flex-shrink: 0; }
+
+  .chart-panel {
+    background: white; border-radius: 14px;
+    padding: 22px; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 1100px) {
+    .kpi-grid    { grid-template-columns: repeat(2, 1fr); }
+    .bottom-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<h2 class="mb-4 fw-bold" style="color:#0f172a;">Dashboard Médico</h2>
+
+
+<div class="kpi-grid">
+  <div class="kpi-card azul">
+    <div class="kpi-icon">📅</div>
+    <div>
+      <div class="kpi-num"><%= kpis.citasHoy %></div>
+      <div class="kpi-label">Citas Hoy</div>
+    </div>
+  </div>
+  <div class="kpi-card naranja">
+    <div class="kpi-icon">⏳</div>
+    <div>
+      <div class="kpi-num"><%= kpis.pendientes %></div>
+      <div class="kpi-label">Pendientes</div>
+    </div>
+  </div>
+  <div class="kpi-card rojo">
+    <div class="kpi-icon">❌</div>
+    <div>
+      <div class="kpi-num"><%= kpis.canceladas %></div>
+      <div class="kpi-label">Canceladas</div>
+    </div>
+  </div>
+  <div class="kpi-card verde">
+    <div class="kpi-icon">✅</div>
+    <div>
+      <div class="kpi-num"><%= kpis.pacientesAtendidos %></div>
+      <div class="kpi-label">Pacientes Atendidos</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="bottom-grid">
+
+  <div class="panel">
+    <div class="panel-title">📋 Próximas Citas</div>
+    <% if (proximasCitas.length === 0) { %>
+      <p class="text-muted small">No hay citas próximas programadas.</p>
+    <% } else { %>
+      <table class="table table-citas w-100">
+        <thead>
+          <tr>
+            <th>Paciente</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% proximasCitas.forEach(cita => { %>
+          <tr>
+            <td><strong><%= cita.pacienteNombre %></strong></td>
+            <td><%= cita.fecha %></td>
+            <td><%= cita.hora || "—" %></td>
+            <td>
+              <span class="badge-estado badge-<%= cita.estado %>">
+                <%= cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1) %>
+              </span>
+            </td>
+            <td>
+              <a href="/pacientes/<%= cita.pacienteId %>" class="btn btn-sm btn-primary" style="font-size:0.78rem; padding:4px 14px; border-radius:8px;">
+                Ver ficha
+              </a>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } %>
+    <div class="mt-3">
+      <a href="/citas" class="btn btn-outline-primary btn-sm">Ver todas las citas →</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title">🔔 Alertas</div>
+    <div class="alertas-panel">
+      <% if (alertas.citasPendientesConfirmar > 0) { %>
+      <div class="alerta-item warn">
+        <span class="alerta-icon">⚠️</span>
+        <span><strong><%= alertas.citasPendientesConfirmar %></strong> citas pendientes de confirmar</span>
+      </div>
+      <% } %>
+      <% if (alertas.noAcudieronAyer > 0) { %>
+      <div class="alerta-item danger">
+        <span class="alerta-icon">❌</span>
+        <span><strong><%= alertas.noAcudieronAyer %></strong> paciente(s) no acudió ayer</span>
+      </div>
+      <% } %>
+      <% if (alertas.recordatoriosPendientes > 0) { %>
+      <div class="alerta-item info">
+        <span class="alerta-icon">📩</span>
+        <span><strong><%= alertas.recordatoriosPendientes %></strong> recordatorios pendientes</span>
+      </div>
+      <% } %>
+      <% if (alertas.citasPendientesConfirmar === 0 && alertas.noAcudieronAyer === 0 && alertas.recordatoriosPendientes === 0) { %>
+      <div class="alerta-item">
+        <span class="alerta-icon">✅</span>
+        <span>Todo en orden. Sin alertas activas.</span>
+      </div>
+      <% } %>
+      
+    </div>
+  </div>
+
+</div>
+
+
+<div class="chart-panel">
+  <div class="panel-title">📈 Citas de la semana</div>
+  <canvas id="graficaSemana" height="90"></canvas>
+</div>
+
+<script>
+  const labels = <%- semanaLabels %>;
+  const datos  = <%- semanaData %>;
+
+  new Chart(document.getElementById('graficaSemana').getContext('2d'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Citas',
+        data: datos,
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.10)',
+        borderWidth: 2.5,
+        pointBackgroundColor: '#3b82f6',
+        pointRadius: 5,
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { stepSize: 1, color: '#94a3b8', font: { size: 11 } },
+          grid: { color: '#f1f5f9' }
+        },
+        x: {
+          ticks: { color: '#94a3b8', font: { size: 11 } },
+          grid: { display: false }
+        }
+      }
+    }
+  });
+</script>

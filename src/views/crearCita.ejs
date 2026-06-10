@@ -1,0 +1,154 @@
+<div class="d-flex align-items-center gap-2 mb-4">
+
+  <a href="/pacientes" class="btn btn-outline-secondary btn-sm">
+    ← Volver
+  </a>
+
+  <h2 class="fw-bold mb-0">
+    Crear Cita
+  </h2>
+
+</div>
+
+
+<div class="card shadow-sm p-4" style="max-width: 700px;">
+
+  <form action="/citas/nueva" method="POST">
+
+    
+    <div class="mb-3">
+
+      <label class="form-label fw-semibold">
+        Paciente:
+      </label>
+
+      <% if (pacientePreseleccionado) { %>
+
+        
+        <input 
+          type="hidden" 
+          name="pacienteId" 
+          value="<%= pacientePreseleccionado.id %>"
+        >
+
+        <div class="mt-2">
+          <p class="fw-bold mb-1">
+            <%= pacientePreseleccionado.Nombre %>
+          </p>
+
+          <small class="text-muted">
+            <%= pacientePreseleccionado.Email %>
+          </small>
+        </div>
+
+      <% } else { %>
+
+        <select name="pacienteId" class="form-select" required>
+
+          <option value="">
+            Selecciona un paciente...
+          </option>
+
+          <% pacientes
+            .filter(p => p.activo === true)
+            .forEach(p => { %>
+
+              <option value="<%= p.id %>">
+                <%= p.Nombre %> — <%= p.Email %>
+              </option>
+
+          <% }) %>
+
+        </select>
+
+      <% } %>
+
+    </div>
+
+
+    <div class="row mb-3">
+
+      <div class="col-md-6">
+
+        <label class="form-label fw-semibold">
+          Fecha:
+        </label>
+
+        <input 
+          type="date" 
+          name="fecha" 
+          class="form-control"
+          min="<%= new Date().toISOString().split('T')[0] %>"
+          required
+        >
+
+      </div>
+
+      <div class="col-md-6">
+
+        <label class="form-label fw-semibold">
+          Hora:
+        </label>
+
+        <input 
+          type="time" 
+          name="hora" 
+          class="form-control" 
+          required
+        >
+
+      </div>
+
+    </div>
+
+
+
+    <div class="mb-3">
+
+      <label class="form-label fw-semibold">
+        Estado:
+      </label>
+
+      <select name="estado" class="form-select">
+
+        <option value="pendiente" selected>
+          Pendiente
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="mb-4">
+
+      <label class="form-label fw-semibold">
+        Observaciones:
+      </label>
+
+      <textarea 
+        name="motivo" 
+        class="form-control" 
+        rows="4"
+        placeholder="Notas de la cita..."
+      ></textarea>
+
+    </div>
+
+
+    
+    <div class="d-flex gap-2">
+
+      <button type="submit" class="btn btn-primary">
+        Guardar cita
+      </button>
+
+      <a href="/pacientes" class="btn btn-outline-secondary">
+        Cancelar
+      </a>
+
+    </div>
+
+  </form>
+
+</div>

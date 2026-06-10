@@ -1,0 +1,156 @@
+<div class="d-flex align-items-center gap-2 mb-4">
+
+  <a href="/citas" class="btn btn-outline-secondary btn-sm">
+    ← Volver
+  </a>
+
+  <h2 class="fw-bold mb-0">
+    Editar Cita
+  </h2>
+
+</div>
+
+
+<div class="card shadow-sm p-4" style="max-width: 700px;">
+
+  
+  <% if (cita.estado === "cancelada") { %>
+
+    <div class="alert alert-danger">
+      Esta cita está cancelada y no puede modificarse.
+    </div>
+
+  <% } %>
+
+
+  <form action="/citas/<%= cita.id %>/editar" method="POST">
+
+    
+    <div class="mb-3">
+
+      <label class="form-label fw-semibold">
+        Paciente:
+      </label>
+
+      <p class="fw-bold mb-0 mt-1">
+        <%= cita.pacienteNombre %>
+      </p>
+
+    </div>
+
+
+    <div class="row mb-3">
+
+      <div class="col-md-6">
+
+        <label class="form-label fw-semibold">
+          Fecha:
+        </label>
+
+        <input
+          type="date"
+          name="fecha"
+          class="form-control"
+          value="<%= cita.fecha %>"
+          min="<%= new Date().toISOString().split('T')[0] %>"
+          <%= cita.estado === "cancelada" ? "disabled" : "" %>
+          required
+        >
+
+      </div>
+
+      <div class="col-md-6">
+
+        <label class="form-label fw-semibold">
+          Hora:
+        </label>
+
+        <input
+          type="time"
+          name="hora"
+          class="form-control"
+          value="<%= cita.hora %>"
+          <%= cita.estado === "cancelada" ? "disabled" : "" %>
+          required
+        >
+
+      </div>
+
+    </div>
+
+
+    
+    <div class="mb-3">
+
+      <label class="form-label fw-semibold">
+        Estado:
+      </label>
+
+      <select
+        name="estado"
+        class="form-select"
+        <%= cita.estado === "cancelada" ? "disabled" : "" %>
+      >
+
+        <option value="pendiente"
+          <%= cita.estado === "pendiente" ? "selected" : "" %>>
+          Pendiente
+        </option>
+
+        <option value="confirmada"
+          <%= cita.estado === "confirmada" ? "selected" : "" %>>
+          Confirmada
+        </option>
+
+        <option value="reprogramada"
+          <%= cita.estado === "reprogramada" ? "selected" : "" %>>
+          Reprogramada
+        </option>
+
+        <option value="cancelada"
+          <%= cita.estado === "cancelada" ? "selected" : "" %>>
+          Cancelada
+        </option>
+
+      </select>
+
+    </div>
+
+
+    
+    <div class="mb-4">
+
+      <label class="form-label fw-semibold">
+        Observaciones:
+      </label>
+
+      <textarea
+        name="motivo"
+        class="form-control"
+        rows="4"
+        <%= cita.estado === "cancelada" ? "disabled" : "" %>
+      ><%= cita.motivo || "" %></textarea>
+
+    </div>
+
+
+    
+    <div class="d-flex gap-2">
+
+      <% if (cita.estado !== "cancelada") { %>
+
+        <button type="submit" class="btn btn-primary">
+          Guardar cambios
+        </button>
+
+      <% } %>
+
+      <a href="/citas" class="btn btn-outline-secondary">
+        Volver
+      </a>
+
+    </div>
+
+  </form>
+
+</div>

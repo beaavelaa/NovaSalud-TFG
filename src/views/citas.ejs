@@ -1,0 +1,89 @@
+<% if (success === "whatsapp") { %>
+  <div class="alert alert-success alert-dismissible fade show shadow-sm">
+    ✅ Recordatorio enviado correctamente.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<% if (success === "editada") { %>
+  <div class="alert alert-success alert-dismissible fade show shadow-sm">
+    ✅ Cita actualizada correctamente.
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<% if (errorMsg && errorMsg !== "whatsapp") { %>
+  <div class="alert alert-danger alert-dismissible fade show shadow-sm">
+    ❌ <%= errorMsg %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+<% } %>
+
+<h2 class="mb-4 fw-bold">Historial de Citas</h2>
+
+<div class="card shadow-sm p-4">
+  <div class="table-responsive">
+    <table class="table align-middle table-hover">
+      <thead class="table-light">
+        <tr>
+          <th>Paciente</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Estado</th>
+          <th>Observación</th>
+          <th class="text-end">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% citas.forEach(c => { %>
+          <tr>
+            <td class="fw-semibold"><%= c.pacienteNombre %></td>
+            <td><%= formatDate(c.fecha) %></td>
+            <td><%= c.hora %></td>
+            <td>
+              <% if (c.estado === "pendiente") { %>
+                <span class="badge bg-warning-subtle text-warning border">Pendiente</span>
+              <% } else if (c.estado === "confirmada") { %>
+                <span class="badge bg-success-subtle text-success border">Confirmada</span>
+              <% } else if (c.estado === "reprogramada") { %>
+                <span class="badge bg-primary-subtle text-primary border">Reprogramada</span>
+              <% } else if (c.estado === "cancelada") { %>
+                <span class="badge bg-danger-subtle text-danger border">Cancelada</span>
+              <% } %>
+            </td>
+            <td class="text-muted"><%= c.motivo || "—" %></td>
+
+            <td class="text-end d-flex justify-content-end gap-2">
+
+ 
+  <a href="/citas/<%= c.id %>/editar" 
+     class="<%= c.estado !== 'cancelada' ? 'btn btn-sm btn-outline-secondary' : 'btn btn-sm btn-outline-secondary disabled' %>">
+    Editar
+  </a>
+
+  
+  <% if (c.estado === 'pendiente') { %>
+    <form action="/whatsapp/enviar/<%= c.id %>" method="POST">
+      <button class="btn btn-sm btn-outline-secondary">
+        Solicitar confirmación
+      </button>
+    </form>
+  <% } %>
+
+</td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  setTimeout(() => {
+    const alert = document.querySelector(".alert");
+    if (alert) {
+      alert.classList.remove("show");
+      alert.classList.add("hide");
+    }
+  }, 3000);
+</script>
